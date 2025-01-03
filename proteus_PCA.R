@@ -33,40 +33,39 @@ library(grid)  #Plot text annotation
 ############INPUTS############
 
 #Files
-setwd("C:/Users/Olivia.Schwartz/Documents/GitHub/Fecal_Metabolomics/Batch Correction")
-# setwd("C:/Users/Olivia.Schwartz/OneDrive - University of Denver/DU/Aron Lab/Experiments/20240828_NAU_Fec_Std/mzMine")
-Imp_clr <- read.csv("Imp_clr.csv", header = T, check.names = F, sep = ",")
+setwd("C:/Users/Olivia.Schwartz/OneDrive - University of Denver/Projects/Proteus Proteobactin/mzMINE/pos")
 
-metadata <- read.csv("20241106_metadata_fecal_batch_noblk_noqc.csv")
+Imp_clr <- read.csv("CLR_Scaled_pos.csv", header = T, check.names = F, sep = ",")
+
+metadata <- read.csv("proteus_pos_md.csv")
 #Remove ATTRIBUTE_
 colnames(metadata)<-gsub("ATTRIBUTE_","",colnames(metadata))
 # metadata$batch_isotope <- paste(metadata$isotope,metadata$batch) #Combine two attributes
 #Attributes to test
 
-feat_test <- "treatment" #Feature being tested for dissimilarity 
-metadata <- metadata %>% dplyr::filter(metadata[[feat_test]] != "Std" & metadata[[feat_test]] != "Blk")
-plot_title <- paste0('Fecal_batchcorrect_',feat_test)
+feat_test <- "group" #Feature being tested for dissimilarity 
+plot_title <- paste0('proteus_',feat_test) #Name attached to plots and files
 
 # # #CONDITION1# -> Comment out if not applicable 
 #Test dissimilarity of this feature under a specific condition (ex. specific timepoint or phenotype)
-feature1 = "isotope" #Feature under which the condition falls
-feat_condition1 = "16O" #Value for condition
+feature1 = "bio_rep" #Feature under which the condition falls
+feat_condition1 = "3" #Value for condition
 metadata <- metadata %>% dplyr::filter(metadata[[feature1]] != "NA" & metadata[[feature1]] == feat_condition1)
 plot_title <- paste0(plot_title,"_",feat_condition1)
 # 
 # # 
 # # # #CONDITION 2#
-feature2 = "wk" #Feature under which the condition falls
-feat_condition2 = "8" #Value for condition
-metadata <- metadata %>% dplyr::filter(metadata[[feature2]] != "NA" & metadata[[feature2]] == feat_condition2)
-plot_title <- paste0(plot_title,"_",feature2,"_",feat_condition2)
+# feature2 = "wk" #Feature under which the condition falls
+# feat_condition2 = "8" #Value for condition
+# metadata <- metadata %>% dplyr::filter(metadata[[feature2]] != "NA" & metadata[[feature2]] == feat_condition2)
+# plot_title <- paste0(plot_title,"_",feature2,"_",feat_condition2)
 # #SPECIFIC CONDIITON#
 # # 
 # # #CONDITION 3#
-feature3 = "strain" #Feature under which the condition falls
-feat_condition3 = "Tg" #Value for condition
-metadata <- metadata %>% dplyr::filter(metadata[[feature3]] != "NA" & metadata[[feature3]] == feat_condition3)
-plot_title <- paste0('Fecal_',feat_test,"_",feat_condition1,"_",feature2,"_",feat_condition2,"_",feature3,"_",feat_condition3)
+# feature3 = "strain" #Feature under which the condition falls
+# feat_condition3 = "Tg" #Value for condition
+# metadata <- metadata %>% dplyr::filter(metadata[[feature3]] != "NA" & metadata[[feature3]] == feat_condition3)
+# plot_title <- paste0('Fecal_',feat_test,"_",feat_condition1,"_",feature2,"_",feat_condition2,"_",feature3,"_",feat_condition3)
 # #SPECIFIC CONDIITON#
 
 # plot_title <- paste0('Fecal_',feature1,'_',feat_condition1,'_',feature2,'_',feat_condition2,'_',feature3,'_',feat_condition3,'_',feat_test)
@@ -81,6 +80,8 @@ metadata <- subset(metadata, filename %in% Imp_clr$filename)
 data_merge <- metadata %>% dplyr::select("filename",feat_test) %>% 
   left_join(Imp_clr) %>% 
   column_to_rownames("filename")
+
+# data_merge$bio_rep <- as.character(data_merge$bio_rep)
 
 #make scree plot 
 res.pca <- data_merge %>% dplyr::filter(data_merge[[feat_test]] != "NA") %>%
