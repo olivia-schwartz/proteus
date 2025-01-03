@@ -43,7 +43,7 @@ colnames(metadata)<-gsub("ATTRIBUTE_","",colnames(metadata))
 # metadata$batch_isotope <- paste(metadata$isotope,metadata$batch) #Combine two attributes
 #Attributes to test
 
-feat_test <- "group" #Feature being tested for dissimilarity 
+feat_test <- "producer" #Feature being tested for dissimilarity 
 plot_title <- paste0('proteus_',feat_test) #Name attached to plots and files
 
 # # #CONDITION1# -> Comment out if not applicable 

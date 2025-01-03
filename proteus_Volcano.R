@@ -18,14 +18,16 @@ metadata <- read.csv("proteus_pos_md.csv", header = T, check.names = F, sep = ",
 colnames(metadata)[1] <- "filename"
 colnames(metadata)<-gsub("ATTRIBUTE_","",colnames(metadata)) #Remove "ATTRIBUTE_"
 
+####file names start with numbers and are therefore having an X added to the beginning upon being converted to a matrix 
+
 ## Inputs
 # isotope = "18O"
 # week = "8"
 # strain = "WT"
-
-neg_fc_label = "WT_Ctrl" #tg
-pos_fc_label = "WT_Bf" #wt
-volcano_title = "16O_WT_Treatment"
+colname_feat = "producer"
+neg_fc_label = "no" #tg
+pos_fc_label = "yes" #wt
+volcano_title = "producer"
 
 data<- as.matrix(dset[-c(1:3)])
 featureIDs <- dset[,1]
@@ -36,16 +38,16 @@ head(data)
 
 # Separate the two conditions into two smaller data frames
 
-filtered_metadata <- metadata %>% dplyr::filter(metadata[["isotope"]] == "16O")
+filtered_metadata <- metadata %>% dplyr::filter(metadata[["bio_rep"]] == "3")
 
 
-wtMetadata <- filtered_metadata[which(filtered_metadata$strain_treatment== paste0(pos_fc_label) & filtered_metadata$treatment != "NA"), ]
+wtMetadata <- filtered_metadata[which(filtered_metadata[[colname_feat]]== paste0(pos_fc_label)), ]
 
 wtFileNames <- c(wtMetadata$filename)
 wtDSet <- dset[, wtFileNames, drop = FALSE]
 wtData<- as.matrix(wtDSet %>% select(-1))
 
-tgMetadata <- filtered_metadata[ which(filtered_metadata$strain_treatment== paste0(neg_fc_label) & filtered_metadata$treatment != "NA"), ]
+tgMetadata <- filtered_metadata[ which(filtered_metadata[[colname_feat]]== paste0(neg_fc_label)), ]
 
 tgFileNames <- c(tgMetadata$filename)
 tgDSet <- dset[, tgFileNames, drop = FALSE]
